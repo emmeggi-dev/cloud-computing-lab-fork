@@ -1,0 +1,29 @@
+services:
+
+  products-service:
+    build: ./products-service
+    image: micro_products:latest
+    container_name: products-service
+    networks:
+      - micro_network
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+
+  orders-service:
+    build: ./orders-service
+    image: micro_orders:latest
+    container_name: orders-service
+    depends_on:
+      - products-service
+    environment:
+      PRODUCTS_URL: http://products-service:3001
+    networks:
+      - micro_network
+    ports:
+      - "3002:3002"
+    restart: unless-stopped
+
+networks:
+  micro_network:
+    driver: bridge
